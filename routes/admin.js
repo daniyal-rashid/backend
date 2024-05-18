@@ -16,6 +16,13 @@ const {
 } = require("../controllers/noticeController");
 
 const authenticationMiddleware = require("../middleware/auth");
+const {
+  handleStudentRegister,
+  getStudent,
+  handleStudentDelete,
+  handleStudentUpdate,
+  getAllStudents,
+} = require("../controllers/student_controller");
 
 // ADMIN ROUTES
 router.route("/dashboard").get(authenticationMiddleware, adminHomePage);
@@ -27,5 +34,13 @@ router
   .get(getNotice)
   .patch(handleUpdateNotice)
   .delete(handleDeleteNotice);
+
+// STUDENT ROUTES
+router.route("/student").post(handleStudentRegister).get(getAllStudents);
+router
+  .route("/student/:id")
+  .get(getStudent)
+  .delete(handleStudentDelete)
+  .patch(handleStudentUpdate);
 
 module.exports = router;

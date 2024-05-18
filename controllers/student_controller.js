@@ -1,32 +1,77 @@
 const Student = require("../models/studentSchema.js");
 const jwt = require("jsonwebtoken");
-const JWT_SECRET = "kashdkasgsd";
+const bcrypt = require("bcryptjs");
 
-const handleStudentLogin = async (req, res) => {
-  const { studentId, password } = req.body;
-  if (!studentId || !password) {
-    return res.json({ msg: "Id or password are required" });
-  }
-  try {
-    const student = await Student.findOne({
-      studentId: studentId,
-      password: password,
+const handleStudentRegister = async (req, res) => {
+  const {
+    studentName,
+    fatherName,
+    gender,
+    sClass,
+    section,
+    studentId,
+    password,
+  } = req.body;
+
+  if (
+    !studentName ||
+    !fatherName ||
+    !gender ||
+    !sClass ||
+    !section ||
+    !studentId ||
+    !password
+  ) {
+    return res.json({
+      status: "failed",
+      msg: "please provide all requires information",
     });
-    if (!student) {
-      return res.json({ msg: "Student not found" });
-    }
-    const token = jwt.sign({ studentId }, JWT_SECRET, { expiresIn: "30d" });
-    return res.json({ status: "success", token: token });
+  }
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const student = await Student.create({
+      studentName: studentName,
+      fatherName: fatherName,
+      gender: gender,
+      sClass: sClass,
+      section: section,
+      studentId: studentId,
+      password: hashedPassword,
+    });
+    res.json({ status: "success", msg: "Student Registered Successfully" });
   } catch (error) {
-    res.redirect("/");
+    res.json({ status: "failed", err: error });
   }
 };
 
-const handleHomePage = async (req, res) => {
-  await res.send("this is home page after login");
+const handleStudentDelete = async (req, res) => {
+  res.send("student deletion");
+};
+
+const handleStudentUpdate = async (req, res) => {
+  res.send("student update");
+};
+
+const getAllStudents = async (req, res) => {
+  try {
+    const students = await Student.find({});
+    res.json(students);
+  } catch (error) {
+    res.json({ status: "failed", msg: error });
+  }
+};
+
+const getStudent = async (req, res) => {
+  res.send("Single student");
 };
 
 module.exports = {
-  handleStudentLogin,
-  handleHomePage,
+  handleStudentRegister,
+  handleStudentDelete,
+  handleStudentUpdate,
+  getAllStudents,
+  getStudent,
 };

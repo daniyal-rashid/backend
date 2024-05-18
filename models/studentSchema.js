@@ -11,27 +11,47 @@ const studentSchema = new mongoose.Schema({
   },
   gender: {
     type: String,
-    required: true,
+    enum: ["Male", "Female"],
   },
-  Class: {
+  school: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "admin",
+    requirec: true,
+  },
+  sClass: {
     type: String,
     required: true,
+    enum: [
+      "One",
+      "Two",
+      "Three",
+      "Four",
+      "Five",
+      "Six",
+      "Seven",
+      "Eight",
+      "Nine",
+      "Ten",
+    ],
   },
   section: {
     type: String,
     required: true,
+    enum: ["A", "B", "C", "D", "E"],
+  },
+  role: {
+    type: String,
+    default: "student",
   },
   studentId: {
-    type: String,
+    type: Number,
     required: true,
-    unique: true,
   },
   password: {
     type: String,
     required: true,
   },
 });
-
 const Student = mongoose.model("student", studentSchema);
 
 module.exports = Student;
