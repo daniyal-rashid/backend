@@ -1,11 +1,7 @@
 const express = require("express");
 const router = express.Router();
 
-const {
-  handleAdminRegister,
-  handleAdminLogin,
-  adminHomePage,
-} = require("../controllers/adminController");
+const { adminHomePage } = require("../controllers/adminController");
 
 const {
   handleCreateNotice,

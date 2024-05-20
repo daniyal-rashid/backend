@@ -4,7 +4,7 @@ const cors = require("cors");
 require("dotenv").config();
 const connectDB = require("./db/connect_db.js");
 const adminRouter = require("./routes/admin.js");
-const router = require("./routes/route.js");
+const router = require("./routes/loginReg.js");
 const authenticationMiddleware = require("./middleware/auth.js");
 
 app.use(cors());
