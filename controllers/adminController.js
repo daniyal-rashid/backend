@@ -7,6 +7,9 @@ const handleAdminRegister = async (req, res) => {
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    if (!name || !email || !password || !schoolName) {
+      return res.json({ status: "fail", msg: "All fields are required" });
+    }
     const admin = await Admin.create({
       name: name,
       email: email,

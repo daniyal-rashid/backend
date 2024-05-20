@@ -8,7 +8,6 @@ const {
   handleUpdateNotice,
   handleDeleteNotice,
   getAllNotice,
-  getNotice,
 } = require("../controllers/noticeController");
 
 const authenticationMiddleware = require("../middleware/auth");
@@ -27,7 +26,6 @@ router.route("/dashboard").get(authenticationMiddleware, adminHomePage);
 router.route("/notice").get(getAllNotice).post(handleCreateNotice);
 router
   .route("/notice/:id")
-  .get(getNotice)
   .patch(handleUpdateNotice)
   .delete(handleDeleteNotice);
 
