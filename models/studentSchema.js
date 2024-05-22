@@ -12,11 +12,15 @@ const studentSchema = new mongoose.Schema({
   gender: {
     type: String,
     enum: ["Male", "Female"],
+    required: true,
   },
-  school: {
+  schoolId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "admin",
-    requirec: true,
+  },
+  schoolName: {
+    type: String,
+    required: true,
   },
   sClass: {
     type: String,
@@ -42,9 +46,14 @@ const studentSchema = new mongoose.Schema({
   role: {
     type: String,
     default: "student",
+    required: true,
+  },
+  rollNo: {
+    type: Number,
+    required: true,
   },
   studentId: {
-    type: Number,
+    type: String,
     required: true,
   },
   password: {

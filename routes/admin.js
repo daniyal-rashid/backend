@@ -13,7 +13,6 @@ const {
 const authenticationMiddleware = require("../middleware/auth");
 const {
   handleStudentRegister,
-  getStudent,
   handleStudentDelete,
   handleStudentUpdate,
   getAllStudents,
@@ -30,10 +29,10 @@ router
   .delete(handleDeleteNotice);
 
 // STUDENT ROUTES
-router.route("/student").post(handleStudentRegister).get(getAllStudents);
+router.route("/studentReg").post(handleStudentRegister);
+router.route("/students").get(getAllStudents);
 router
   .route("/student/:id")
-  .get(getStudent)
   .delete(handleStudentDelete)
   .patch(handleStudentUpdate);
 

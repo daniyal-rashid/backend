@@ -35,7 +35,7 @@ const handleUpdateNotice = async (req, res) => {
 const handleDeleteNotice = async (req, res) => {
   try {
     await Notice.deleteOne({ _id: req.params.id });
-    res.json({ msg: "Delted Successfully" });
+    res.json({ msg: "Deleted Successfully" });
   } catch (error) {
     res.json({ msg: "failed", err: error });
   }

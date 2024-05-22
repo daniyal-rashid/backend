@@ -16,8 +16,8 @@ const handleAdminRegister = async (req, res) => {
       password: hashedPassword,
       schoolName: schoolName,
     });
-    const { _id } = admin;
-    const token = jwt.sign({ _id }, process.env.JWT_SECRET, {
+    const { _id, schoolName } = admin;
+    const token = jwt.sign({ _id, schoolName }, process.env.JWT_SECRET, {
       expiresIn: "30d",
     });
     res.json({ msg: "success", token: token });
@@ -35,11 +35,11 @@ const handleAdminLogin = async (req, res) => {
     const admin = await Admin.findOne({
       email: email,
     });
-    const { _id } = admin;
+    const { _id, schoolName } = admin;
     if (admin) {
       const validated = await bcrypt.compare(password, admin.password);
       if (validated) {
-        const token = jwt.sign({ _id }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ _id, schoolName }, process.env.JWT_SECRET, {
           expiresIn: "30d",
         });
         return res.json({ msg: "success", token: token });
