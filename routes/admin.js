@@ -2,7 +2,9 @@ const express = require("express");
 const router = express.Router();
 
 const { adminHomePage } = require("../controllers/adminController");
+const authenticationMiddleware = require("../middleware/auth");
 
+// Notice
 const {
   handleCreateNotice,
   handleUpdateNotice,
@@ -10,13 +12,21 @@ const {
   getAllNotice,
 } = require("../controllers/noticeController");
 
-const authenticationMiddleware = require("../middleware/auth");
+// Students
 const {
   handleStudentRegister,
   handleStudentDelete,
   handleStudentUpdate,
   getAllStudents,
 } = require("../controllers/student_controller");
+
+//Teachers
+const {
+  handleTeacherRegistration,
+  getAllTeachers,
+  handleTeacherDelete,
+  handleTeacherUpdate,
+} = require("../controllers/teacherControllers");
 
 // ADMIN ROUTES
 router.route("/dashboard").get(authenticationMiddleware, adminHomePage);
@@ -35,5 +45,13 @@ router
   .route("/student/:id")
   .delete(handleStudentDelete)
   .patch(handleStudentUpdate);
+
+// TEACHER ROUTES
+router.route("/teacherReg").post(handleTeacherRegistration);
+router.route("/teachers").get(getAllTeachers);
+router
+  .route("/teacher/:id")
+  .delete(handleTeacherDelete)
+  .patch(handleTeacherUpdate);
 
 module.exports = router;
