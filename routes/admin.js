@@ -29,7 +29,7 @@ const {
 } = require("../controllers/teacherControllers");
 
 // ADMIN ROUTES
-router.route("/dashboard").get(authenticationMiddleware, adminHomePage);
+router.route("/dashboard").get(adminHomePage);
 
 // NOTICE ROUTES
 router.route("/notice").get(getAllNotice).post(handleCreateNotice);

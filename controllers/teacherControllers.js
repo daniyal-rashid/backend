@@ -83,9 +83,45 @@ const handleTeacherUpdate = async (req, res) => {
   }
 };
 
+const handleTeacherLogin = async (req, res) => {
+  const { email, password, role } = req.body;
+  try {
+    const teacher = await Teacher.findOne({ email: email, role: "Teacher" });
+    if (teacher) {
+      const validated = bcrypt.compare(password, teacher.password);
+      const { _id, schoolName, schoolId } = teacher;
+      if (validated) {
+        const token = jwt.sign(
+          { _id, schoolName, schoolId },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: "30d",
+          }
+        );
+        return res.json({ status: "success", token: token });
+      } else {
+        return res.json({
+          status: "failed",
+          msg: "email or password is incorrect",
+        });
+      }
+    } else {
+      return res.json({ status: "failed", msg: "NOT FOUND" });
+    }
+  } catch (error) {
+    res, json({ status: "failed", err: error });
+  }
+};
+
+const handleTeacherDashboard = async (req, res) => {
+  res.send("this is teacher dashboard");
+};
+
 module.exports = {
   handleTeacherRegistration,
   getAllTeachers,
   handleTeacherDelete,
   handleTeacherUpdate,
+  handleTeacherLogin,
+  handleTeacherDashboard,
 };

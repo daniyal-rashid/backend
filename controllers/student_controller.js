@@ -99,9 +99,14 @@ const getAllStudents = async (req, res) => {
   }
 };
 
+const handleStudentLogin = async (req, res) => {
+  res.send("student Login");
+};
+
 module.exports = {
   handleStudentRegister,
   handleStudentDelete,
   handleStudentUpdate,
   getAllStudents,
+  handleStudentLogin,
 };
