@@ -1,4 +1,5 @@
 const Teacher = require("../models/teacherSchema");
+const TeacherAttendance = require("../models/teacherAttendance");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
@@ -117,6 +118,38 @@ const handleTeacherDashboard = async (req, res) => {
   res.send("this is teacher dashboard");
 };
 
+const handleTeacherAttendance = async (req, res) => {
+  const { teacherId, date, status } = req.body;
+
+  try {
+    const teacherAttendance = await TeacherAttendance.create({
+      teacherId: teacherId,
+      date: date,
+      status: status,
+    });
+
+    res.json({ status: "success", data: teacherAttendance });
+  } catch (error) {
+    res.json({ msg: "failed", err: error });
+  }
+};
+
+const teacherAttendanceReport = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
+  const verify = jwt.verify(token, process.env.JWT_SECRET);
+  const { _id } = verify;
+
+  try {
+    const attendanceReport = await TeacherAttendance.find({
+      teacherId: _id,
+    });
+    res.json({ data: attendanceReport });
+  } catch (error) {
+    res.json({ status: "failed", err: error });
+  }
+};
+
 module.exports = {
   handleTeacherRegistration,
   getAllTeachers,
@@ -124,4 +157,6 @@ module.exports = {
   handleTeacherUpdate,
   handleTeacherLogin,
   handleTeacherDashboard,
+  handleTeacherAttendance,
+  teacherAttendanceReport,
 };

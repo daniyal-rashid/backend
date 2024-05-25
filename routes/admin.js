@@ -26,6 +26,7 @@ const {
   getAllTeachers,
   handleTeacherDelete,
   handleTeacherUpdate,
+  handleTeacherAttendance,
 } = require("../controllers/teacherControllers");
 
 // ADMIN ROUTES
@@ -53,5 +54,6 @@ router
   .route("/teacher/:id")
   .delete(handleTeacherDelete)
   .patch(handleTeacherUpdate);
+router.route("/teacherAttendance").post(handleTeacherAttendance);
 
 module.exports = router;
