@@ -16,11 +16,13 @@ const handleAdminRegister = async (req, res) => {
       password: hashedPassword,
       schoolName: schoolName,
     });
-    const { _id, schoolName } = admin;
-    const token = jwt.sign({ _id, schoolName }, process.env.JWT_SECRET, {
-      expiresIn: "30d",
-    });
-    res.json({ msg: "success", token: token });
+    if (admin) {
+      const { _id, schoolName } = admin;
+      const token = jwt.sign({ _id, schoolName }, process.env.JWT_SECRET, {
+        expiresIn: "30d",
+      });
+      res.json({ msg: "success", token: token });
+    }
   } catch (error) {
     res.json({ msg: "failed", err: error });
   }

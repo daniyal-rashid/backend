@@ -22,7 +22,6 @@ const adminSchema = new mongoose.Schema(
     schoolName: {
       type: String,
       required: true,
-      unique: true,
     },
   },
   { timestamps: true }
