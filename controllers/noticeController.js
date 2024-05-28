@@ -42,7 +42,6 @@ const handleDeleteNotice = async (req, res) => {
 };
 
 const getAllNotice = async (req, res) => {
-  const { title, details, date } = req.body;
   const authHeader = req.headers.authorization;
   const token = authHeader.split(" ")[1];
   const verify = jwt.verify(token, process.env.JWT_SECRET);
@@ -55,9 +54,24 @@ const getAllNotice = async (req, res) => {
   }
 };
 
+const showAllNotices = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
+  const verify = jwt.verify(token, process.env.JWT_SECRET);
+  const { schoolId } = verify;
+
+  try {
+    const notices = await Notice.find({ school: schoolId });
+    res.json({ data: notices });
+  } catch (error) {
+    res.json({ status: "failed", err: error });
+  }
+};
+
 module.exports = {
   handleCreateNotice,
   handleUpdateNotice,
   handleDeleteNotice,
   getAllNotice,
+  showAllNotices,
 };

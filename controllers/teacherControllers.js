@@ -12,6 +12,7 @@ const handleTeacherRegistration = async (req, res) => {
     qualification,
     salary,
     sClass,
+    section,
     teachSubject,
   } = req.body;
 
@@ -32,6 +33,7 @@ const handleTeacherRegistration = async (req, res) => {
       salary: salary,
       qualification: qualification,
       sClass: sClass,
+      section: section,
       teachSubject: teachSubject,
       schoolName: schoolName,
       schoolId: _id,
@@ -85,11 +87,12 @@ const handleTeacherUpdate = async (req, res) => {
 };
 
 const handleTeacherLogin = async (req, res) => {
-  const { email, password, role } = req.body;
+  const { email, password } = req.body;
   try {
     const teacher = await Teacher.findOne({ email: email, role: "Teacher" });
     if (teacher) {
-      const validated = bcrypt.compare(password, teacher.password);
+      const validated = await bcrypt.compare(password, teacher.password);
+      console.log(validated);
       const { _id, schoolName, schoolId } = teacher;
       if (validated) {
         const token = jwt.sign(

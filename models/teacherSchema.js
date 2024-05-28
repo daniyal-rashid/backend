@@ -57,15 +57,24 @@ const teacherSchema = new mongoose.Schema(
         "Ten",
       ],
     },
+    section: {
+      type: String,
+      required: true,
+      enum: ["A", "B", "C", "D", "E"],
+    },
     teachSubject: [
       {
-        name: {
+        subName: {
           type: String,
           required: true,
         },
         classes: [
           {
             class: {
+              type: String,
+              required: true,
+            },
+            section: {
               type: String,
               required: true,
             },

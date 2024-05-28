@@ -31,8 +31,6 @@ const handleStudentRegister = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const studentId = `${sClass}-${section}-${rollNo}`;
-    console.log(studentId);
-    console.log(typeof studentId);
 
     const student = await Student.create({
       studentName: studentName,
@@ -100,7 +98,35 @@ const getAllStudents = async (req, res) => {
 };
 
 const handleStudentLogin = async (req, res) => {
-  res.send("student Login");
+  const { studentId, password } = req.body;
+
+  try {
+    const student = await Student.findOne({ studentId: studentId });
+    if (student) {
+      const validated = await bcrypt.compare(password, student.password);
+      console.log(validated);
+      const { _id, schoolName, schoolId } = student;
+      if (validated) {
+        const token = jwt.sign(
+          { _id, schoolName, schoolId },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: "30d",
+          }
+        );
+        return res.json({ status: "success", token: token });
+      } else {
+        return res.json({
+          status: "failed",
+          msg: "ID or password is incorrect",
+        });
+      }
+    } else {
+      return res.json({ status: "failed", msg: "Student Not Found" });
+    }
+  } catch (error) {
+    res.json({ status: "faield", err: error });
+  }
 };
 
 module.exports = {
