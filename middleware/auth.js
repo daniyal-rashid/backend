@@ -9,8 +9,9 @@ const authenticationMiddleware = (req, res, next) => {
     }
     const token = authHeader.split(" ")[1];
     const verify = jwt.verify(token, process.env.JWT_SECRET);
-
-    next();
+    if (verify) {
+      return next();
+    }
   } catch (error) {
     res.redirect("/");
   }

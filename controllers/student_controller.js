@@ -104,7 +104,6 @@ const handleStudentLogin = async (req, res) => {
     const student = await Student.findOne({ studentId: studentId });
     if (student) {
       const validated = await bcrypt.compare(password, student.password);
-      console.log(validated);
       const { _id, schoolName, schoolId } = student;
       if (validated) {
         const token = jwt.sign(
@@ -129,10 +128,15 @@ const handleStudentLogin = async (req, res) => {
   }
 };
 
+const handleStudentDashboard = async (req, res) => {
+  res.send("This is student dashboard");
+};
+
 module.exports = {
   handleStudentRegister,
   handleStudentDelete,
   handleStudentUpdate,
   getAllStudents,
   handleStudentLogin,
+  handleStudentDashboard,
 };

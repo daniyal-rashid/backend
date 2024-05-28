@@ -14,9 +14,13 @@ const noticeSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
-    school: {
+    schoolId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "admin",
+    },
+    schoolName: {
+      type: String,
+      required: true,
     },
   },
   { timestamps: true }

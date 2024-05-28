@@ -6,13 +6,14 @@ const handleCreateNotice = async (req, res) => {
   const authHeader = req.headers.authorization;
   const token = authHeader.split(" ")[1];
   const verify = jwt.verify(token, process.env.JWT_SECRET);
-  const { _id } = verify;
+  const { _id, schoolName } = verify;
   try {
     const notice = await Notice.create({
       title: title,
       details: details,
       date: date,
-      school: _id,
+      schoolId: _id,
+      schoolName: schoolName,
     });
     res.status(201).json({ msg: "success", notice: notice });
   } catch (error) {
@@ -61,7 +62,7 @@ const showAllNotices = async (req, res) => {
   const { schoolId } = verify;
 
   try {
-    const notices = await Notice.find({ school: schoolId });
+    const notices = await Notice.find({ schoolId: schoolId });
     res.json({ data: notices });
   } catch (error) {
     res.json({ status: "failed", err: error });
