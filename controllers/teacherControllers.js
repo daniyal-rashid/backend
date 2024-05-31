@@ -126,12 +126,12 @@ const handleTeacherDashboard = async (req, res) => {
 };
 
 const handleTeacherAttendance = async (req, res) => {
-  // const { teacherId, date, status } = req.body;
-  console.log(req.body.Result);
+  const { attendance, date } = req.body;
 
   try {
     const teacherAttendance = await TeacherAttendance.create({
-      result: req.body.Result,
+      attendance: attendance,
+      date: date,
     });
 
     res.json({ status: "success", data: teacherAttendance });
