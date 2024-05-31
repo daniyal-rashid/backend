@@ -3,8 +3,16 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 const handleStudentRegister = async (req, res) => {
-  const { studentName, fatherName, gender, sClass, section, rollNo, password } =
-    req.body;
+  const {
+    studentName,
+    fatherName,
+    gender,
+    sClass,
+    section,
+    rollNo,
+    password,
+    role,
+  } = req.body;
 
   if (
     !studentName ||
@@ -13,7 +21,8 @@ const handleStudentRegister = async (req, res) => {
     !sClass ||
     !section ||
     !rollNo ||
-    !password
+    !password ||
+    !role
   ) {
     return res.json({
       status: "failed",
@@ -43,11 +52,12 @@ const handleStudentRegister = async (req, res) => {
       rollNo: rollNo,
       studentId: studentId,
       password: hashedPassword,
+      role: role,
     });
 
     res.json({
       msg: "Student Registered Successfully",
-      data: { studentId: studentId, password: password },
+      data: { studentId: studentId, password: password, role: role },
     });
   } catch (error) {
     res.json({ status: "failed", err: error });

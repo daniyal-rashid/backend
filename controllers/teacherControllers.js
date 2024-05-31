@@ -14,6 +14,7 @@ const handleTeacherRegistration = async (req, res) => {
     sClass,
     section,
     teachSubject,
+    role,
   } = req.body;
 
   const authHeader = req.headers.authorization;
@@ -37,8 +38,12 @@ const handleTeacherRegistration = async (req, res) => {
       teachSubject: teachSubject,
       schoolName: schoolName,
       schoolId: _id,
+      role: role,
     });
-    res.json({ status: "success", data: teacher });
+    res.json({
+      msg: "Teacher Registered Successfully",
+      data: { email: email, password: password, role: role },
+    });
   } catch (error) {
     res.json({ status: "failed", err: error });
   }
@@ -92,7 +97,6 @@ const handleTeacherLogin = async (req, res) => {
     const teacher = await Teacher.findOne({ email: email, role: "Teacher" });
     if (teacher) {
       const validated = await bcrypt.compare(password, teacher.password);
-      console.log(validated);
       const { _id, schoolName, schoolId } = teacher;
       if (validated) {
         const token = jwt.sign(
@@ -122,13 +126,12 @@ const handleTeacherDashboard = async (req, res) => {
 };
 
 const handleTeacherAttendance = async (req, res) => {
-  const { teacherId, date, status } = req.body;
+  // const { teacherId, date, status } = req.body;
+  console.log(req.body.Result);
 
   try {
     const teacherAttendance = await TeacherAttendance.create({
-      teacherId: teacherId,
-      date: date,
-      status: status,
+      result: req.body.Result,
     });
 
     res.json({ status: "success", data: teacherAttendance });

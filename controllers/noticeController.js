@@ -48,7 +48,7 @@ const getAllNotice = async (req, res) => {
   const verify = jwt.verify(token, process.env.JWT_SECRET);
   const { _id } = verify;
   try {
-    const notices = await Notice.find({ school: _id });
+    const notices = await Notice.find({ schoolId: _id });
     res.status(200).json(notices);
   } catch (error) {
     return res.json({ status: "failed", msg: "Invalid Token" });

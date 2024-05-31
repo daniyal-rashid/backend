@@ -45,7 +45,7 @@ const studentSchema = new mongoose.Schema({
   },
   role: {
     type: String,
-    default: "student",
+    default: "Student",
     required: true,
   },
   rollNo: {
