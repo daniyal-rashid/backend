@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const attendanceSchema = new mongoose.Schema(
+const studentAttendacnceSchema = new mongoose.Schema(
   {
     schoolId: {
       type: mongoose.Schema.Types.ObjectId,
@@ -18,8 +18,8 @@ const attendanceSchema = new mongoose.Schema(
         },
         status: {
           type: String,
-          enum: ["Present", "Absent", "LateIn"],
           required: true,
+          enum: ["Present", "Absent"],
         },
       },
     ],
@@ -31,6 +31,9 @@ const attendanceSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const TeacherAttendance = mongoose.model("teacherAttendance", attendanceSchema);
+const StudentAttendacnce = mongoose.model(
+  "studentAttendance",
+  studentAttendacnceSchema
+);
 
-module.exports = TeacherAttendance;
+module.exports = StudentAttendacnce;

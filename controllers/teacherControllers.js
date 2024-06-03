@@ -1,4 +1,5 @@
 const Teacher = require("../models/teacherSchema");
+const Student = require("../models/studentSchema");
 const TeacherAttendance = require("../models/teacherAttendance");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -126,12 +127,17 @@ const handleTeacherDashboard = async (req, res) => {
 };
 
 const handleTeacherAttendance = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
+  const verify = jwt.verify(token, process.env.JWT_SECRET);
+  const { _id } = verify;
   const { attendance, date } = req.body;
 
   try {
     const teacherAttendance = await TeacherAttendance.create({
       attendance: attendance,
       date: date,
+      schoolId: _id,
     });
 
     res.json({ status: "success", data: teacherAttendance });
@@ -147,13 +153,37 @@ const teacherAttendanceReport = async (req, res) => {
   const { _id } = verify;
 
   try {
-    const attendanceReport = await TeacherAttendance.find({
-      teacherId: _id,
-    });
-    res.json({ data: attendanceReport });
+    const attendanceReport = await TeacherAttendance.find(
+      {
+        "attendance.id": _id,
+      },
+      { "attendance.$": 1 }
+    ).exec();
+
+    res.json({ msg: "success", data: attendanceReport });
   } catch (error) {
-    res.json({ status: "failed", err: error });
+    res.json({ msg: "failed", err: error });
   }
+};
+
+const showStudents = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
+  const verify = jwt.verify(token, process.env.JWT_SECRET);
+  const { _id } = verify;
+
+  const teacher = await Teacher.findOne({ _id: _id });
+
+  const students = await Student.find({
+    schoolId: teacher.schoolId,
+    sClass: teacher.sClass,
+    section: teacher.section,
+  });
+
+  res.json({
+    msg: "success",
+    data: { students },
+  });
 };
 
 module.exports = {
@@ -165,4 +195,5 @@ module.exports = {
   handleTeacherDashboard,
   handleTeacherAttendance,
   teacherAttendanceReport,
+  showStudents,
 };
