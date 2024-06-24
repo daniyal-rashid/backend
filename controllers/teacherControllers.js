@@ -57,7 +57,7 @@ const getAllTeachers = async (req, res) => {
   const { _id } = verify;
   try {
     const teachers = await Teacher.find({ schoolId: _id });
-    res.json(teachers);
+    res.json({ data: teachers });
   } catch (error) {
     res.json({ status: "failed", err: error });
   }
