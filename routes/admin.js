@@ -27,6 +27,7 @@ const {
   handleTeacherDelete,
   handleTeacherUpdate,
   handleTeacherAttendance,
+  assignSubjectsToTeacher,
 } = require("../controllers/teacherControllers");
 
 // ADMIN ROUTES

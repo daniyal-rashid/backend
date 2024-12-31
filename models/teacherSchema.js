@@ -33,10 +33,6 @@ const teacherSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
-    schoolName: {
-      type: String,
-      required: true,
-    },
     schoolId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "admin",
@@ -62,26 +58,6 @@ const teacherSchema = new mongoose.Schema(
       required: true,
       enum: ["A", "B", "C", "D", "E"],
     },
-    teachSubject: [
-      {
-        subName: {
-          type: String,
-          required: true,
-        },
-        classes: [
-          {
-            class: {
-              type: String,
-              required: true,
-            },
-            section: {
-              type: String,
-              required: true,
-            },
-          },
-        ],
-      },
-    ],
   },
   { timestamps: true }
 );

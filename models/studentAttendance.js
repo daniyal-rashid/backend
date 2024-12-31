@@ -27,6 +27,14 @@ const studentAttendacnceSchema = new mongoose.Schema(
       type: Date,
       required: true,
     },
+    sClass: {
+      type: String,
+      required: true,
+    },
+    section: {
+      type: String,
+      required: true,
+    },
   },
   { timestamps: true }
 );

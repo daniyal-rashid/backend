@@ -14,7 +14,6 @@ const handleTeacherRegistration = async (req, res) => {
     salary,
     sClass,
     section,
-    teachSubject,
     role,
   } = req.body;
 
@@ -36,7 +35,6 @@ const handleTeacherRegistration = async (req, res) => {
       qualification: qualification,
       sClass: sClass,
       section: section,
-      teachSubject: teachSubject,
       schoolName: schoolName,
       schoolId: _id,
       role: role,
@@ -83,7 +81,6 @@ const handleTeacherUpdate = async (req, res) => {
         salary: req.body.salary,
         qualification: req.body.qualification,
         sClass: req.body.sClass,
-        teachSubject: req.body.teachSubject,
       }
     );
     res.json({ msg: "Successfully Updated" });
@@ -98,15 +95,11 @@ const handleTeacherLogin = async (req, res) => {
     const teacher = await Teacher.findOne({ email: email, role: "Teacher" });
     if (teacher) {
       const validated = await bcrypt.compare(password, teacher.password);
-      const { _id, schoolName, schoolId } = teacher;
+      const { _id, schoolId } = teacher;
       if (validated) {
-        const token = jwt.sign(
-          { _id, schoolName, schoolId },
-          process.env.JWT_SECRET,
-          {
-            expiresIn: "30d",
-          }
-        );
+        const token = jwt.sign({ _id, schoolId }, process.env.JWT_SECRET, {
+          expiresIn: "30d",
+        });
         return res.json({ status: "success", token: token });
       } else {
         return res.json({
@@ -157,7 +150,7 @@ const teacherAttendanceReport = async (req, res) => {
       {
         "attendance.id": _id,
       },
-      { "attendance.$": 1 }
+      { "attendance.$": 1, date: 1 }
     ).exec();
 
     res.json({ msg: "success", data: attendanceReport });

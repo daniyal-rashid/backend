@@ -29,14 +29,15 @@ const handleAdminRegister = async (req, res) => {
 };
 
 const handleAdminLogin = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    return res.json({ msg: "email or password are required" });
-  }
   try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.json({ msg: "email or password are required" });
+    }
     const admin = await Admin.findOne({
       email: email,
     });
+
     const { _id, schoolName } = admin;
     if (admin) {
       const validated = await bcrypt.compare(password, admin.password);
@@ -58,7 +59,7 @@ const handleAdminLogin = async (req, res) => {
       });
     }
   } catch (error) {
-    res.json({ msg: "failed", err: error });
+    res.json({ msg: "failed", err: error.message });
   }
 };
 

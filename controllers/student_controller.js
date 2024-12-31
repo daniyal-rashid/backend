@@ -1,6 +1,8 @@
 const Student = require("../models/studentSchema.js");
+const StudentAttendance = require("../models/studentAttendance.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const Teacher = require("../models/teacherSchema.js");
 
 const handleStudentRegister = async (req, res) => {
   const {
@@ -142,6 +144,51 @@ const handleStudentDashboard = async (req, res) => {
   res.send("This is student dashboard");
 };
 
+const handleStudentAttendance = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
+  const verify = jwt.verify(token, process.env.JWT_SECRET);
+  const { schoolId, _id } = verify;
+  const { attendance, date } = req.body;
+
+  try {
+    const teacher = await Teacher.findOne({ _id: _id });
+    const { sClass, section } = teacher;
+
+    const studentAttendance = await StudentAttendance.create({
+      attendance: attendance,
+      date: date,
+      schoolId: schoolId,
+      sClass: sClass,
+      section: section,
+    });
+
+    res.json({ status: "success", data: studentAttendance });
+  } catch (error) {
+    res.json({ msg: "failed", err: error });
+  }
+};
+
+const handleStudentAttendenceReport = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
+  const verify = jwt.verify(token, process.env.JWT_SECRET);
+  const { _id } = verify;
+
+  try {
+    const attendanceReport = await StudentAttendance.find(
+      {
+        "attendance.id": _id,
+      },
+      { "attendance.$": 1, date: 1 }
+    ).exec();
+
+    res.json({ msg: "success", data: attendanceReport });
+  } catch (error) {
+    res.json({ msg: "failed", err: error });
+  }
+};
+
 module.exports = {
   handleStudentRegister,
   handleStudentDelete,
@@ -149,4 +196,6 @@ module.exports = {
   getAllStudents,
   handleStudentLogin,
   handleStudentDashboard,
+  handleStudentAttendance,
+  handleStudentAttendenceReport,
 };
