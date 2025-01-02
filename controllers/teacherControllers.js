@@ -95,9 +95,9 @@ const handleTeacherLogin = async (req, res) => {
     const teacher = await Teacher.findOne({ email: email, role: "Teacher" });
     if (teacher) {
       const validated = await bcrypt.compare(password, teacher.password);
-      const { _id, schoolId } = teacher;
+      const { _id, schoolId, role } = teacher;
       if (validated) {
-        const token = jwt.sign({ _id, schoolId }, process.env.JWT_SECRET, {
+        const token = jwt.sign({ _id, schoolId, role }, process.env.JWT_SECRET, {
           expiresIn: "30d",
         });
         return res.json({ status: "success", token: token });

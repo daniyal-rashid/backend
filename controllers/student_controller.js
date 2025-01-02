@@ -116,10 +116,10 @@ const handleStudentLogin = async (req, res) => {
     const student = await Student.findOne({ studentId: studentId });
     if (student) {
       const validated = await bcrypt.compare(password, student.password);
-      const { _id, schoolName, schoolId } = student;
+      const { _id, schoolName, schoolId, role } = student;
       if (validated) {
         const token = jwt.sign(
-          { _id, schoolName, schoolId },
+          { _id, schoolName, schoolId, role },
           process.env.JWT_SECRET,
           {
             expiresIn: "30d",
