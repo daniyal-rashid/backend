@@ -2,7 +2,9 @@ const Student = require("../models/studentSchema.js");
 const StudentAttendance = require("../models/studentAttendance.js");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
+const CryptoJS = require("crypto-js");
 const Teacher = require("../models/teacherSchema.js");
+const Fee = require("../models/feeSchema.js");
 
 const handleStudentRegister = async (req, res) => {
   const {
@@ -40,6 +42,10 @@ const handleStudentRegister = async (req, res) => {
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    const encryptedPassword = CryptoJS.AES.encrypt(
+      password,
+      process.env.SECRET_KEY
+    ).toString();
 
     const studentId = `${sClass}-${section}-${rollNo}`;
 
@@ -53,7 +59,10 @@ const handleStudentRegister = async (req, res) => {
       section: section,
       rollNo: rollNo,
       studentId: studentId,
-      password: hashedPassword,
+      password: {
+        hashed: hashedPassword,
+        encrypted: encryptedPassword,
+      },
       role: role,
     });
 
@@ -97,15 +106,42 @@ const handleStudentUpdate = async (req, res) => {
 };
 
 const getAllStudents = async (req, res) => {
-  const authHeader = req.headers.authorization;
-  const token = authHeader.split(" ")[1];
-  const verify = jwt.verify(token, process.env.JWT_SECRET);
-  const { _id } = verify;
   try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(" ")[1];
+    if (!token) return res.status(401).json({ msg: "No token provided" });
+
+    const verify = jwt.verify(token, process.env.JWT_SECRET);
+    const { _id } = verify;
+
     const students = await Student.find({ schoolId: _id });
-    res.json(students);
+
+    const decryptedPassword = (encryptedPassword) => {
+      try {
+        const bytes = CryptoJS.AES.decrypt(
+          encryptedPassword,
+          process.env.SECRET_KEY
+        );
+        return bytes.toString(CryptoJS.enc.Utf8);
+      } catch (e) {
+        console.error("Decryption error:", e);
+        return "Error";
+      }
+    };
+
+    const studentsList = students.map((student) => {
+      return {
+        id: student._id,
+        name: student.studentName,
+        std_id: student.studentId,
+        password: decryptedPassword(student.password?.encrypted),
+      };
+    });
+
+    res.json(studentsList);
   } catch (error) {
-    res.json({ status: "failed", msg: error });
+    console.error("Get All Students Error:", error);
+    res.status(500).json({ status: "failed", msg: error.message });
   }
 };
 
@@ -115,7 +151,8 @@ const handleStudentLogin = async (req, res) => {
   try {
     const student = await Student.findOne({ studentId: studentId });
     if (student) {
-      const validated = await bcrypt.compare(password, student.password);
+      const validated = await bcrypt.compare(password, student.password.hashed);
+
       const { _id, schoolName, schoolId, role } = student;
       if (validated) {
         const token = jwt.sign(
@@ -136,7 +173,7 @@ const handleStudentLogin = async (req, res) => {
       return res.json({ status: "failed", msg: "Student Not Found" });
     }
   } catch (error) {
-    res.json({ status: "faield", err: error });
+    res.json({ status: "faield", err: error.message });
   }
 };
 
@@ -185,7 +222,45 @@ const handleStudentAttendenceReport = async (req, res) => {
 
     res.json({ msg: "success", data: attendanceReport });
   } catch (error) {
-    res.json({ msg: "failed", err: error });
+    res.json({ msg: "failed", err: error.message });
+  }
+};
+
+const handleFees = async (req, res) => {
+  try {
+    const { studentID, month, status } = req.body;
+
+    const student = await Student.findOne({ _id: studentID });
+
+    if (student) {
+      await Student.findOneAndUpdate(
+        { _id: student._id },
+        { $push: { feeDetails: { month: month, status: status } } },
+        { new: true }
+      );
+
+      return res.json({ status: "success", msg: "Successfully Submitted Fee" });
+    } else {
+      return res.json({ msg: "STUDENT NOT FOUND" });
+    }
+  } catch (error) {
+    res.json({ msg: "failed", err: error.message });
+  }
+};
+
+// Show Fee Details on Student Portal
+
+const showFeeDetailsToStudent = async (req, res) => {
+  const authHeader = req.headers.authorization;
+  const token = authHeader.split(" ")[1];
+  const verify = jwt.verify(token, process.env.JWT_SECRET);
+  const { _id } = verify;
+  try {
+    const data = await Student.find({ _id: _id });
+    const result = data[0].feeDetails;
+    res.json({ feeDetails: result });
+  } catch (error) {
+    res.json({ msg: "failed", err: error.message });
   }
 };
 
@@ -198,4 +273,6 @@ module.exports = {
   handleStudentDashboard,
   handleStudentAttendance,
   handleStudentAttendenceReport,
+  handleFees,
+  showFeeDetailsToStudent,
 };

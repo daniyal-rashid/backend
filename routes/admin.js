@@ -18,6 +18,7 @@ const {
   handleStudentDelete,
   handleStudentUpdate,
   getAllStudents,
+  handleFees,
 } = require("../controllers/student_controller");
 
 //Teachers
@@ -27,7 +28,6 @@ const {
   handleTeacherDelete,
   handleTeacherUpdate,
   handleTeacherAttendance,
-  assignSubjectsToTeacher,
 } = require("../controllers/teacherControllers");
 
 // ADMIN ROUTES
@@ -43,6 +43,7 @@ router
 // STUDENT ROUTES
 router.route("/studentReg").post(handleStudentRegister);
 router.route("/students").get(getAllStudents);
+router.route("/submitfee").post(handleFees);
 router
   .route("/student/:id")
   .delete(handleStudentDelete)

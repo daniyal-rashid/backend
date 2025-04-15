@@ -57,9 +57,28 @@ const studentSchema = new mongoose.Schema({
     unique: true,
   },
   password: {
-    type: String,
-    required: true,
+    hashed: {
+      type: String,
+      required: true,
+    },
+    encrypted: {
+      type: String,
+      required: true,
+    },
   },
+  feeDetails: [
+    {
+      month: {
+        type: String,
+        required: true,
+      },
+      status: {
+        type: String,
+        required: true,
+        enum: ["UNPAID", "PAID"],
+      },
+    },
+  ],
 });
 const Student = mongoose.model("student", studentSchema);
 
