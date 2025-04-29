@@ -4,7 +4,6 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const CryptoJS = require("crypto-js");
 const Teacher = require("../models/teacherSchema.js");
-const Fee = require("../models/feeSchema.js");
 
 const handleStudentRegister = async (req, res) => {
   const {
