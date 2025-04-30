@@ -134,6 +134,9 @@ const getAllStudents = async (req, res) => {
         name: student.studentName,
         std_id: student.studentId,
         password: decryptedPassword(student.password?.encrypted),
+        fatherName: student.fatherName,
+        sClass: student.sClass,
+        section: student.section,
       };
     });
 
